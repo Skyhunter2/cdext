@@ -3,6 +3,8 @@ param (
     $value
 )
 
+
+
 #code $PROFILE.CurrentUserAllHosts
 
 #If the profile does not already exist, creates a file to append functions too.
@@ -56,11 +58,17 @@ function List {
 
 function Remove {
     param (
-        $value,
+        $name,
         $all
     )
     if($all) {
-        Clear-Content -Path $AliasStorageFilePath -Exclude "init"
+        Clear-Content -Path $AliasStorageFilePath -Exclude "#init"
+    }
+    try {
+        [Environment]::SetEnvironmentVariable($name,'')
+    }
+    catch {
+        Write-Host "No pathway with that name"
     }
 }
 
@@ -83,6 +91,21 @@ function Save {
         [Parameter(Mandatory=$true)]$name,
         $value
     )
+
+    if($null -eq $value) {
+        [Environment]::SetEnvironmentVariable($name,$pwd)
+    } else {
+        [Environment]::SetEnvironmentVariable($name,$value)
+    } 
+}
+
+
+function SaveAsAlias {
+    param (
+        [Parameter(Mandatory=$true)]$name,
+        $value
+    )
+
     if($null -eq $value) {
         Set-Alias -Name $name -Value $pwd
     } else {
@@ -90,11 +113,21 @@ function Save {
     } 
 }
 
-function cd_to {
+
+function CDto {
     param (
-        $path
+        [String] $path
     )
-    Set-Location $path.ToString()
+    try {
+        [Environment]::GetEnvironmentVariable($path) | Set-Location
+    }
+    catch {
+        Write-Host "No such pathway exists"
+    }
+}
+
+function Help {
+    
 }
 
 #intilializes program and sets the defualt alias to be referenced by the cdext script
@@ -104,10 +137,12 @@ function initialize() {
     $fileContent = Get-Content -Path $AliasStorageFilePath
     if ($fileContent[1] -eq "#init") {
         #TODO: Develop better check system because this one is kinda bad :)
+        Write-Host "Program previously intialized"
     } else {
         Write-Host "Initializing CDEXT"
         Add-Content -Path $AliasStorageFilePath -Value "#init" -Force #puts a 'tag' in the profile to check if the program has been previously initialized.
 
+        #Add-Content $global:saves = @()
         #
         Add-Content -Path $AliasStorageFilePath -Value "Set-Alias -Name cdext -Value `$PWD\cdext.ps1 -Scope Global" 
         #Add-Content -Path $AliasStorageFilePath -Value "Set-Alias -Name cd_to -Value `$PWD\cdext.ps1 -Scope Global" #Todo: Make powershell able to parse the space in between here 
@@ -124,10 +159,21 @@ function initialize() {
         #save Functionality
         $SaveStr = PrintFunctionAsString -name Save
         Add-Content -Path $AliasStorageFilePath -Value $SaveStr
-        Set-Alias -Name -save -Value Save
-        Set-Alias -Name -sav -Value Save
-        Set-Alias -Name -sa -Value Save
+        Set-Alias -Name save -Value Save
+        Set-Alias -Name sav -Value Save
+        Set-Alias -Name sa -Value Save
         Set-Alias -Name "-s" -Value Save
+
+        $SaveAlias = PrintFunctionAsString -name SaveAsAlias
+        Add-Content -Path $AliasStorageFilePath -Value $SaveAlias
+        Set-Alias -Name saveas -Value SaveAsAlias
+        Set-Alias -Name savea -Value SaveAsAliass
+        Set-Alias -Name sa -Value SaveAsAlias
+
+        $cd2 = PrintFunctionAsString -name CDto
+        Add-Content -Path $AliasStorageFilePath -Value $cd2
+        Set-Alias -Name cdto -Value CDto
+
     }
 }
 
