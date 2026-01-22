@@ -8,7 +8,7 @@ A simple powershell module for quickly changing directories. Directories can be 
 
 ## Getting Started
 
-Navigate to a frequently used directory in powershell. Run the save <name> comand and specify the name you would like. CD to the home directory, and run the cdto <name> command. Enjoy! 
+Navigate to a frequently used directory in powershell. Run the save <name> comand and specify the name you would like. CD to the home directory, and run the cdto \\<name\\> command. Enjoy! 
 
 Simple help files are included. If anything is unclear or something should be added please leave an issue and I will update it accordiningly.
 
@@ -25,11 +25,11 @@ The defualt is under C:/User/<username>/Modules for windows. Linux is not suppor
 
 ## Usage
 
-save <name> <path>  | path defualts to current directory if path is empty
+save \\<name\\> \\<path\\>  | path defualts to current directory if path is empty
 
-remove <name>
+remove \\<name\\>
 
-cdto <name>
+cdto \\<name\\>
 
 ## License
 
