@@ -43,7 +43,7 @@ if(!(Test-Path -Path $PROFILE.CurrentUserAllHosts)) {
     New-Item -path $PROFILE -type File -Force
 }
 Add-Content -Path $UserProfilePath -Value "Import-Module -Name $PSModulePath -Verbose | Out-Null"
-Add-Content -Path $UserProfilePath -Value "-Set-Alias -name cdto -value Update-Directory"
+Add-Content -Path $UserProfilePath -Value "Set-Alias -name cdto -value Update-Directory"
 Add-Content -Path $UserProfilePath -Value "Set-Alias -name rem -value Remove"
 
 
@@ -54,4 +54,5 @@ Register-EngineEvent -Source PowerShell.Exiting -Action {
         $script:SingleInstanceMutex.ReleaseMutex()
         $script:SingleInstanceMutex.Dispose()
     }
+
 }
